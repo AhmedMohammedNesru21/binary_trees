@@ -1,64 +1,67 @@
 #include "binary_trees.h"
 
 /**
- * count_nodes - Counts ths inside a tree
- * @root:  node
- *
- * Return: Number odes
+ * binary_tree_height_aux -  a tree
+ * @tree: Pointer to
+ * Return: Trees
  */
-
-int count_nodes(binary_tree_t *root)
+size_t	binary_tree_height_aux(const binary_tree_t *tree)
 {
-	if (!root)
-		return (0);
-
-	return (1 + count_nodes(root->left) + count_nodes(root->right));
-}
-
-
-/**
- * is_complete - Checks if a tree is complete
- * @root: Pointer to tree's root
- * @index: Index of the node been evaluated
- * @n: number of trees nod
- *
- * Return: 1 if the tree is a heap, 0 otherwise
- */
-
-int is_complete(binary_tree_t *root, int index, int n)
-{
-	if (!root)
-		return (0);
-
-	if (index >= n)
-		return (0);
-	if (!root->left && !root->right)
-		return (1);
-	if (root->right && !root->left)
-		return (0);
-	if (root->left && !root->right)
-		return (is_complete(root->left, index * 2 + 1, n));
-
-	return (is_complete(root->left, index * 2 + 1, n) &&
-		is_complete(root->right, index * 2 + 2, n));
-}
-
-/**
- * binary_tree_is_complete - check for bt complete
- * @tree: Pointer to root
- *
- * Return: 1 if
- */
-int binary_tree_is_complete(const binary_tree_t *tree)
-{
-	int nod;
-	binary_tree_t *root;
+	size_t hleft = 0, hright = 0;
 
 	if (!tree)
 		return (0);
+	if (tree->left)
+		hleft = 1 + binary_tree_height_aux(tree->left);
+	if (tree->right)
+		hright = 1 + binary_tree_height_aux(tree->right);
 
-	root = (binary_tree_t *)tree;
-	nod = count_nodes(root);
+	if (hleft > hright)
+		return (hleft);
+	return (hright);
+}
 
-	return (is_complete(root, 0, nod));
+/**
+ * print_level_order - print each
+ * @tree: pointer to thse
+ * @level: level of the tree
+ * @func: pointer to a  node
+ * Return: void
+ */
+void print_level_order(const binary_tree_t *tree, int level, void (*func)(int))
+{
+	if (!tree)
+		return;
+
+	if (level == 1)
+		func(tree->n);
+	else if (level > 1)
+	{
+		print_level_order(tree->left, level - 1, func);
+		print_level_order(tree->right, level - 1, func);
+	}
+}
+
+/**
+ * binary_tree_levelorder - function that goes through a
+ * binary tree using level-order traversal
+ * @tree: pointer to the root node of the tree to traverse
+ * @func: pointer to a function to call for each node
+ * Return: void
+ */
+void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
+{
+	int height = 0;
+	int len = 1;
+
+	if (!tree || !func)
+		return;
+
+	height = binary_tree_height_aux(tree) + 1;
+
+	while (len <= height)
+	{
+		print_level_order(tree, len, func);
+		len++;
+	}
 }
